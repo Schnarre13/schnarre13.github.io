@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sev1 Incident Response Agent | Eric Schnarr</title>
+<meta name="description" content="Case study: a Copilot Studio agent that helped incident commanders triage Severity 1 outages, with recommend-only guardrails and a data boundary by design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --ink: #1c1f24;
+    --muted: #5b6270;
+    --line: #e2ddd2;
+    --accent: #1f5c4d;
+    --accent-soft: #e3eee9;
+    --tag: #8a6a2f;
+    --tint: #efece5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171b;
+      --surface: #1c2026;
+      --ink: #eceae4;
+      --muted: #a2a8b3;
+      --line: #2c323a;
+      --accent: #6fc2a8;
+      --accent-soft: #1d2f2a;
+      --tag: #d6b273;
+      --tint: #20252c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 Inter, system-ui, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  nav { padding: 24px 0 0; font-size: 15px; }
+  nav a { text-decoration: none; }
+  header { padding: 40px 0 32px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--tag); font-weight: 600; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 10px 0 16px; }
+  .lede { font-size: 19px; color: var(--muted); margin: 0; }
+  h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 26px; margin: 48px 0 12px; }
+  h3 { font-size: 18px; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  .facts { width: 100%; border-collapse: collapse; margin: 28px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  .facts th, .facts td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .facts tr:last-child th, .facts tr:last-child td { border-bottom: none; }
+  .facts th { width: 120px; color: var(--muted); font-weight: 600; }
+  figure { margin: 24px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .decision { margin: 0 0 20px; }
+  .decision strong { display: block; margin-bottom: 4px; }
+  .guards { display: grid; gap: 12px; margin-top: 16px; }
+  .guard { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; font-size: 15px; }
+  .guard strong { display: block; margin-bottom: 2px; font-size: 16px; }
+  .callout { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; margin: 20px 0; }
+  .callout p:last-child { margin: 0; }
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 8px; }
+  footer { margin-top: 56px; padding: 32px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  /* diagram */
+  .d-edge { stroke: var(--muted); }
+  .d-box { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+  .d-main { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .d-group { fill: none; stroke: var(--line); stroke-width: 1.25; }
+  .d-zone { fill: var(--tint); stroke: var(--muted); stroke-width: 1.25; stroke-dasharray: 5 4; }
+  .d-name { fill: var(--ink); font-weight: 600; font-size: 13px; }
+  .d-line { fill: var(--muted); font-size: 11.5px; }
+  .d-job { fill: var(--ink); font-size: 11.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="./">← Eric Schnarr · Portfolio</a></nav>
+
+  <header>
+    <div class="eyebrow">Case study</div>
+    <h1>Sev1 Incident Response Agent</h1>
+    <p class="lede">I designed and deployed a Copilot Studio agent that helped incident commanders triage Severity 1 outages faster, and challenged them when they locked onto the wrong cause. Over three months, Sev1 time to resolve fell 15%, alongside improved monitoring and Datadog's Bits AI.</p>
+    <table class="facts">
+      <tr><th>Setting</th><td>National healthcare SaaS platform, HIPAA-regulated</td></tr>
+      <tr><th>My role</th><td>Incident commander; designed, built and governed the agent</td></tr>
+      <tr><th>Users</th><td>Team of 2 incident managers, 1 IT director and 1 change manager</td></tr>
+      <tr><th>Platform</th><td>Microsoft Copilot Studio, Microsoft Teams, Microsoft 365</td></tr>
+      <tr><th>Outcome</th><td>15% faster Sev1 resolution over 3 months (shared result, see Outcome)</td></tr>
+    </table>
+  </header>
+
+  <h2>The problem: starting every Sev1 from zero</h2>
+  <p>Incident commanders joined each Severity 1 call with almost nothing to start from. The platform saw both recurring incidents and a steady stream of new ones, but dependencies, application behavior and past Sev1s were poorly documented.</p>
+  <p>The first minutes of every incident were the hardest. Commanders had to form and test hypotheses from memory while the outage was live, and the same issues kept coming back because follow-up actions weren't captured well enough to prevent them.</p>
+  <p>The business need was clear: shorten time to resolve, reduce the load on commanders at the start of an incident, and build a better record so repeat incidents became easier to solve.</p>
+
+  <h2>How it worked</h2>
+  <figure>
+    <svg viewBox="0 0 760 388" role="img" aria-label="The agent advised; people decided what ran">
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker></defs>
+      <text x="24" y="28" class="d-name" style="font-size:15px">The agent advised; people decided what ran</text>
+      <rect x="16" y="44" width="728" height="248" rx="8" class="d-group"/>
+      <text x="32" y="64" class="d-line">Corporate network: email, Teams, Microsoft 365</text>
+      <g class="d-edge" fill="none" stroke-width="1.25">
+        <path d="M224 104H278" marker-end="url(#arr)"/>
+        <path d="M224 176H278" marker-end="url(#arr)"/>
+        <path d="M224 248H278" marker-end="url(#arr)"/>
+        <path d="M480 140H534" marker-end="url(#arr)"/>
+        <path d="M632 168V206" marker-end="url(#arr)"/>
+      </g>
+      <rect x="32" y="76" width="192" height="56" rx="8" class="d-box"/>
+      <text x="128" y="100" text-anchor="middle" class="d-name">Hourly status emails</text>
+      <text x="128" y="116" text-anchor="middle" class="d-line">Also logged in Datadog</text>
+      <rect x="32" y="148" width="192" height="56" rx="8" class="d-box"/>
+      <text x="128" y="172" text-anchor="middle" class="d-name">Incident Teams chat</text>
+      <text x="128" y="188" text-anchor="middle" class="d-line">Actions and Bits AI posts</text>
+      <rect x="32" y="220" width="192" height="56" rx="8" class="d-box"/>
+      <text x="128" y="244" text-anchor="middle" class="d-name">Monitoring data</text>
+      <text x="128" y="260" text-anchor="middle" class="d-line">Copied in by commanders</text>
+      <rect x="280" y="92" width="200" height="168" rx="8" class="d-main"/>
+      <text x="380" y="116" text-anchor="middle" class="d-name">Copilot Studio agent</text>
+      <text x="380" y="140" text-anchor="middle" class="d-job">Finds similar incidents</text>
+      <text x="380" y="156" text-anchor="middle" class="d-job">Ranks likely causes</text>
+      <text x="380" y="172" text-anchor="middle" class="d-job">Recommends tests and fixes</text>
+      <text x="380" y="188" text-anchor="middle" class="d-job">Suggests overlooked causes</text>
+      <text x="380" y="244" text-anchor="middle" class="d-line">Recommend only, no actions</text>
+      <rect x="536" y="112" width="192" height="56" rx="8" class="d-box"/>
+      <text x="632" y="136" text-anchor="middle" class="d-name">Incident commander</text>
+      <text x="632" y="152" text-anchor="middle" class="d-line">Gate 1: corroborates first</text>
+      <rect x="536" y="208" width="192" height="56" rx="8" class="d-box"/>
+      <text x="632" y="232" text-anchor="middle" class="d-name">Incident team</text>
+      <text x="632" y="248" text-anchor="middle" class="d-line">Gate 2: decides what to run</text>
+      <rect x="16" y="308" width="728" height="56" rx="8" class="d-zone"/>
+      <text x="380" y="332" text-anchor="middle" class="d-name">Isolated Azure production environment (PHI)</text>
+      <text x="380" y="348" text-anchor="middle" class="d-line">Reachable only by jump box or VDI. No path from the agent.</text>
+    </svg>
+    <figcaption>Three sources fed the agent, an incident commander screened every recommendation, and the team decided what to run. Patient data sat in a separate, isolated network the agent could not reach.</figcaption>
+  </figure>
+
+  <h2>Design decisions</h2>
+  <div class="decision"><strong>1. Built to challenge the team, not just speed it up.</strong>The agent had four jobs: find similar past incidents, propose alternative hypotheses ranked by likelihood, recommend tests and corrective actions, and suggest causes the team hadn't considered. That last job was deliberate. Under pressure, incident teams lock onto the first plausible cause, and the agent's role was to keep other options on the table.</div>
+  <div class="decision"><strong>2. Grounded in what the team was already producing.</strong>Security controls blocked the agent from connecting to Datadog, our system of record for Sev1s. Rather than wait for an integration, I designed around it. My hourly status emails, which I also logged in Datadog, became the agent's running incident record. The live Teams chat gave it current actions and discussion. Incident commanders pasted in Datadog and Bits AI monitoring data by hand to ground its analysis.</div>
+  <div class="decision"><strong>3. Available where the work happened.</strong>Commanders reached the agent from inside Teams, so they didn't have to switch between the incident chat and the Datadog or Azure monitoring screens during the most demanding minutes.</div>
+  <div class="decision"><strong>4. Separate tools for separate jobs.</strong>The agent handled reasoning. Teams Copilot handled documentation, generating periodic incident summaries from the call transcript with standard prompts. Keeping the two apart kept each tool focused and its output easier to judge.</div>
+  <div class="decision"><strong>5. A shared prompt library.</strong>Our IT director had set out the questions he wanted asked on every Sev1. I used his list as the base for a set of detailed, reusable prompts, so every incident started from the same leadership-defined questions and everyone used the agent the same way.</div>
+
+  <h2>Guardrails</h2>
+  <p>The agent could advise but never act, and it had no path to patient data.</p>
+  <div class="guards">
+    <div class="guard"><strong>Recommend only</strong>The agent could not page people, run commands, change systems or update records. Its output was text for an incident commander to read.</div>
+    <div class="guard"><strong>Two human gates</strong>An incident commander judged each recommendation before passing it to the team, and the team decided whether to run a test or corrective action.</div>
+    <div class="guard"><strong>Corroboration before action</strong>Commanders weighed a recommendation by checking it against Bits AI findings, live monitoring, past incidents and team feedback, not by the agent's confidence.</div>
+    <div class="guard"><strong>Data boundary by design</strong>Patient health information lived only in an isolated Azure production environment, reachable solely through jump boxes and VDI. The agent ran on the separate corporate network, using email, Teams and manually supplied metrics, so it had no path to PHI.</div>
+    <div class="guard"><strong>Approved platform</strong>The agent ran in Copilot Studio inside the company's Microsoft 365 environment, under its existing security and access controls.</div>
+  </div>
+
+  <h2>Outcome</h2>
+  <p>Sev1 time to resolve fell 15% over three months. The incident team adopted the agent quickly, because it addressed a problem they all faced, and the shared prompts gave them a consistent way to start every investigation.</p>
+  <p>That 15% came from three changes that reinforced each other:</p>
+  <ul>
+    <li><strong>Better monitoring.</strong> The monitoring team kept building new dashboards from our lessons learned and improved documentation.</li>
+    <li><strong>Datadog's Bits AI</strong>, used to investigate monitoring data.</li>
+    <li><strong>This agent</strong>, used to generate and challenge hypotheses.</li>
+  </ul>
+  <div class="callout"><p>Because all three improved together during live incidents, the agent's individual share can't be isolated, and I don't claim it. The honest result is a combined one, and the lesson is that attribution has to be designed in before launch, not reconstructed afterward.</p></div>
+
+  <h2>Lessons learned</h2>
+  <div class="decision"><strong>Confident and wrong is the default without grounding.</strong>Early on, the agent was often confidently wrong. Feeding it real monitoring data from Bits AI cut that sharply. The rule I took away: an AI system's confidence is not evidence, and its value depends on what it's grounded in.</div>
+  <div class="decision"><strong>The best grounding came from a habit, not an integration.</strong>The monitoring team began posting Bits AI findings and monitoring data directly in the incident Teams chat. Because the agent read that chat, it picked up the data automatically and focused its answers, which cut down the manual pasting we had been doing. Sometimes the fastest fix to a data gap is a change in team habits.</div>
+  <div class="decision"><strong>Security constraints shape the design, so plan for them.</strong>Without Datadog access, commanders copied data between tools by hand. A direct, security-approved integration would have made the agent faster and better grounded. Next time I'd start that approval in parallel with the build, rather than treating the constraint as fixed.</div>
+  <div class="decision"><strong>Feedback has to be built in, not requested.</strong>Nearly all testing and feedback happened during live incidents, and the pace of daily work made structured feedback hard to collect. That improved the agent quickly but left no baseline and no repeatable test.</div>
+
+  <h3>What I'd do differently</h3>
+  <ol>
+    <li>Build a small evaluation set from past Sev1s before launch, so improvements can be measured against a baseline.</li>
+    <li>Add one-click feedback on each recommendation (useful or not useful) to capture signal without slowing anyone down.</li>
+    <li>Stagger changes, or track which tools were used on each incident, so the agent's contribution can be measured on its own.</li>
+    <li>Begin the security review for a direct monitoring integration on day one.</li>
+  </ol>
+
+  <footer>Eric Schnarr · Saint Louis, MO · <a href="https://www.linkedin.com/in/ericschnarr">LinkedIn</a> · <a href="./">Portfolio home</a></footer>
+</div>
+</body>
+</html>
