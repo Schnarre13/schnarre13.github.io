@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Governance Toolkit | Eric Schnarr</title>
+<meta name="description" content="An AI governance toolkit for a transformation office: intake, risk tiering, prioritization, stage gates, model cards, value scorecards and portfolio reporting, aligned to NIST AI RMF, with a worked example from a real AI agent.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI Governance Toolkit for a Transformation Office">
+<meta property="og:description" content="Governance that keeps AI moving: a fast lane for low-risk work, full controls for regulated work, and a portfolio view of value, not just activity.">
+<meta property="og:url" content="https://schnarre13.github.io/governance-toolkit.html">
+<meta property="og:image" content="https://schnarre13.github.io/governance-toolkit-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Eric Schnarr">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --ink: #1c1f24;
+    --muted: #5b6270;
+    --line: #e2ddd2;
+    --accent: #1f5c4d;
+    --accent-soft: #e3eee9;
+    --tag: #8a6a2f;
+    --tint: #efece5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171b;
+      --surface: #1c2026;
+      --ink: #eceae4;
+      --muted: #a2a8b3;
+      --line: #2c323a;
+      --accent: #6fc2a8;
+      --accent-soft: #1d2f2a;
+      --tag: #d6b273;
+      --tint: #20252c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 Inter, system-ui, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  nav { padding: 24px 0 0; font-size: 15px; }
+  nav a { text-decoration: none; }
+  header { padding: 40px 0 32px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--tag); font-weight: 600; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 10px 0 16px; }
+  .lede { font-size: 19px; color: var(--muted); margin: 0; }
+  h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 26px; margin: 48px 0 12px; }
+  h3 { font-size: 18px; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  .facts { width: 100%; border-collapse: collapse; margin: 28px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  .facts th, .facts td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .facts tr:last-child th, .facts tr:last-child td { border-bottom: none; }
+  .facts th { width: 120px; color: var(--muted); font-weight: 600; }
+  figure { margin: 24px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .decision { margin: 0 0 20px; }
+  .decision strong { display: block; margin-bottom: 4px; }
+  .guards { display: grid; gap: 12px; margin-top: 16px; }
+  .guard { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; font-size: 15px; }
+  .guard strong { display: block; margin-bottom: 2px; font-size: 16px; }
+  .callout { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; margin: 20px 0; }
+  .callout p:last-child { margin: 0; }
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 8px; }
+  footer { margin-top: 56px; padding: 32px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  /* diagram */
+  .d-edge { stroke: var(--muted); }
+  .d-box { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+  .d-main { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .d-group { fill: none; stroke: var(--line); stroke-width: 1.25; }
+  .d-zone { fill: var(--tint); stroke: var(--muted); stroke-width: 1.25; stroke-dasharray: 5 4; }
+  .d-name { fill: var(--ink); font-weight: 600; font-size: 13px; }
+  .d-line { fill: var(--muted); font-size: 11.5px; }
+  .d-job { fill: var(--ink); font-size: 11.5px; }
+  table.plain { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 12px 0 20px; background: var(--surface); border: 1px solid var(--line); }
+  table.plain th, table.plain td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.plain th { color: var(--muted); font-weight: 600; background: var(--tint); }
+  table.plain td.num, table.plain th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pill { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .g { background: #e3f1e7; color: #1f6b3a; } .a { background: #fbf0d9; color: #8a5a00; } .r { background: #f9e1df; color: #9b2c22; }
+  .v { background: #e7e3f6; color: #4b3a8f; }
+  @media (prefers-color-scheme: dark) { .g { background:#1d3326; color:#8fd3a6; } .a { background:#3a3020; color:#e7c27a; } .r { background:#3d2422; color:#f0a49b; } .v { background:#2b2640; color:#c2b6f2; } }
+  .sample { border: 1px dashed var(--muted); border-radius: 12px; padding: 18px 20px; margin: 20px 0; background: var(--surface); }
+  .sample-tag { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--tag); font-weight: 600; margin-bottom: 8px; }
+  pre.prompt { white-space: pre-wrap; background: var(--tint); border-radius: 10px; padding: 14px 16px; font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 8px 0 18px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .toc a { font-size: 14px; text-decoration: none; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+  .note { font-size: 14px; color: var(--muted); }
+  .wrap { max-width: 960px; }
+  table.plain td:first-child { white-space: nowrap; }
+  .sample table.plain td:first-child { white-space: normal; }
+  .sample table.plain.raid td:first-child { white-space: nowrap; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 12px 0 16px; }
+  .tile { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .tile .n { font-family: Fraunces, Georgia, serif; font-size: 26px; color: var(--accent); line-height: 1.1; }
+  .tile .l { font-size: 13.5px; color: var(--muted); }
+  .pain { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 12px; }
+  .pain div { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--tag); border-radius: 10px; padding: 14px 16px; font-size: 15px; }
+  .pain strong { display: block; margin-bottom: 4px; }
+  .t1 { background: #e3f1e7; color: #1f6b3a; } .t2 { background: #fbf0d9; color: #8a5a00; } .t3 { background: #f9e1df; color: #9b2c22; }
+  @media (prefers-color-scheme: dark) { .t1 { background:#1d3326; color:#8fd3a6; } .t2 { background:#3a3020; color:#e7c27a; } .t3 { background:#3d2422; color:#f0a49b; } }
+  .real { border: 1px solid var(--accent); border-radius: 12px; padding: 18px 20px; margin: 20px 0; background: var(--accent-soft); }
+  .real-tag { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  .real table.plain { background: var(--surface); }
+  @media (max-width: 640px) { .pain { grid-template-columns: 1fr; } }
+  ul.check { list-style: none; padding-left: 0; } ul.check li { padding-left: 26px; position: relative; } ul.check li::before { content: "\2610"; position: absolute; left: 0; color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="./">&larr; Eric Schnarr &middot; Portfolio</a></nav>
+
+  <header>
+    <div class="eyebrow">Framework &middot; AI governance</div>
+    <h1>AI Governance Toolkit for a Transformation Office</h1>
+    <p class="lede">Governance that keeps AI moving instead of slowing it down. Low-risk use cases get a fast lane, regulated and high-impact ones get the full set of controls, and leadership gets a portfolio view of value, not just activity. The tools are aligned to the NIST AI Risk Management Framework.</p>
+    <div class="toc">
+      <a href="#intake">Intake</a><a href="#tiers">Risk tiers</a><a href="#portfolio">Prioritization</a><a href="#gates">Stage gates</a><a href="#card">Model card</a><a href="#value">Value scorecard</a><a href="#report">Portfolio report</a><a href="#example">Worked example</a>
+    </div>
+  </header>
+
+  <h2>The problems it solves</h2>
+  <p>AI transformation offices tend to hit the same four problems once the number of use cases grows past a handful.</p>
+  <div class="pain">
+    <div><strong>Too many ideas, no consistent way to choose</strong>Every workstream brings use cases. Without one intake and one scoring method, priority goes to whoever is loudest.</div>
+    <div><strong>One-size governance slows everything</strong>When a meeting-summary tool gets the same review as a regulated-process tool, teams route around governance entirely.</div>
+    <div><strong>Leaders see activity, not value</strong>Pilots launched and users trained are easy to report. Whether any of it moved a business metric usually isn't.</div>
+    <div><strong>Regulated risk found late</strong>In regulated industries like life sciences, discovering a validation or privacy requirement at the pilot stage costs months.</div>
+  </div>
+
+  <h2>How a use case moves</h2>
+  <figure>
+    <svg viewBox="0 0 760 236" role="img" aria-label="Risk sets how much governance a use case gets; value decides whether it scales">
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker></defs>
+      <text x="24" y="28" class="d-name" style="font-size:15px">Risk sets how much governance a use case gets; value decides whether it scales</text>
+      <g class="d-edge" fill="none" stroke-width="1.25">
+        <path d="M128 92H138" marker-end="url(#arr)"/><path d="M244 92H254" marker-end="url(#arr)"/>
+        <path d="M360 92H370" marker-end="url(#arr)"/><path d="M500 92H510" marker-end="url(#arr)"/>
+        <path d="M616 92H626" marker-end="url(#arr)"/>
+        <path d="M436 120V150H308V122" marker-end="url(#arr)"/>
+      </g>
+      <rect x="24" y="64" width="104" height="56" rx="8" class="d-box"/>
+      <text x="76" y="88" text-anchor="middle" class="d-name">Intake</text><text x="76" y="104" text-anchor="middle" class="d-line">Problem + metric</text>
+      <rect x="140" y="64" width="104" height="56" rx="8" class="d-box"/>
+      <text x="192" y="88" text-anchor="middle" class="d-name">Tier</text><text x="192" y="104" text-anchor="middle" class="d-line">Sets controls</text>
+      <rect x="256" y="64" width="104" height="56" rx="8" class="d-box"/>
+      <text x="308" y="88" text-anchor="middle" class="d-name">Build + pilot</text><text x="308" y="104" text-anchor="middle" class="d-line">Evaluate + card</text>
+      <rect x="372" y="64" width="128" height="56" rx="8" class="d-main"/>
+      <text x="436" y="88" text-anchor="middle" class="d-name">Gate</text><text x="436" y="104" text-anchor="middle" class="d-job">Go / Iterate / Stop</text>
+      <rect x="512" y="64" width="104" height="56" rx="8" class="d-box"/>
+      <text x="564" y="88" text-anchor="middle" class="d-name">Scale</text><text x="564" y="104" text-anchor="middle" class="d-line">Monitor + adopt</text>
+      <rect x="628" y="64" width="116" height="56" rx="8" class="d-box"/>
+      <text x="686" y="88" text-anchor="middle" class="d-name">Value</text><text x="686" y="104" text-anchor="middle" class="d-line">90-day review</text>
+      <text x="372" y="168" text-anchor="middle" class="d-line">Iterate returns to build; Stop retires the use case</text>
+      <rect x="24" y="186" width="720" height="34" rx="8" class="d-zone"/>
+      <text x="384" y="208" text-anchor="middle" class="d-line">NIST AI RMF:  Map (intake, tiers) · Measure (evaluation, value) · Manage (gates, monitoring) · Govern (forums, reports)</text>
+    </svg>
+    <figcaption>Every use case follows the same path. Tier 1 work moves through a fast lane; Tier 3 work gets the full set of controls before it reaches a gate.</figcaption>
+  </figure>
+
+  <p>Every example below uses one <strong>fictional sample</strong>: an AI transformation office at a life sciences company, with use cases across the three teams a transformation office typically runs (Transformers, Workforce Architects, and AI &amp; Data Innovators). The company and use cases are invented; the governance methods are the ones I use.</p>
+
+  <h2 id="intake">1. Use-case intake</h2>
+  <p>One short form for every idea. It's deliberately light, because its main job is to force the two questions most AI proposals skip: <em>what business metric will this move,</em> and <em>how will we know?</em></p>
+  <div class="scroll"><table class="plain">
+    <tr><th>Field</th><th>What it captures</th><th>Why it matters</th></tr>
+    <tr><td>Problem and owner</td><td>The business problem in one sentence; the accountable business owner</td><td>No owner, no use case</td></tr>
+    <tr><td>Target metric and baseline</td><td>The metric it should move, its current value, and how it's measured</td><td>Without a baseline, value can't be proven later</td></tr>
+    <tr><td>Users and decisions</td><td>Who uses the output, and what decision or action it informs</td><td>Sets the human-oversight design</td></tr>
+    <tr><td>Data</td><td>Data sources, sensitivity (personal, health, confidential), where it lives</td><td>Drives privacy and security review</td></tr>
+    <tr><td>Process context</td><td>Whether it touches a regulated process (for example GxP), patients, or external communication</td><td>Main input to the risk tier</td></tr>
+    <tr><td>Autonomy</td><td>Recommend only, act with approval, or act on its own</td><td>Higher autonomy raises the tier</td></tr>
+    <tr><td>Duplication check</td><td>Similar use cases or tools already in the portfolio</td><td>Reuse before new build</td></tr>
+  </table></div>
+
+  <h2 id="tiers">2. Risk tiers</h2>
+  <p>The tier decides how much governance a use case gets. That proportionality is what keeps teams inside the process.</p>
+  <div class="scroll"><table class="plain">
+    <tr><th>Tier</th><th>Typical profile</th><th>Required controls</th><th>Approver</th></tr>
+    <tr><td><span class="pill t1">Tier 1 &middot; Low</span></td><td>Internal productivity; no sensitive data; a person uses the output; easy to reverse</td><td>Intake record; acceptable-use check; adoption metric</td><td>Workstream lead (fast lane, target under a week)</td></tr>
+    <tr><td><span class="pill t2">Tier 2 &middot; Moderate</span></td><td>Informs internal business decisions; confidential data; recommend only</td><td>Tier 1, plus risk assessment, model card, evaluation set with pass thresholds, human-in-the-loop design</td><td>AI governance forum</td></tr>
+    <tr><td><span class="pill t3">Tier 3 &middot; High</span></td><td>Touches patients, regulated processes or submissions, external communications, or health data; or acts without human approval</td><td>Tier 2, plus validation appropriate to the regulated process, privacy and legal review, failure-mode testing, monitoring plan, named accountable owner</td><td>Steering committee with quality and regulatory</td></tr>
+  </table></div>
+
+  <h2 id="portfolio">3. Prioritization</h2>
+  <p>Risk is a gate, not a score: it sets the controls, while value and feasibility set the order. Each is scored 1 to 5 at intake, and the product ranks the queue.</p>
+  <div class="sample">
+    <div class="sample-tag">Sample &middot; fictional life sciences transformation office</div>
+    <div class="scroll"><table class="plain raid">
+      <tr><th>ID</th><th>Use case</th><th>Team</th><th>Tier</th><th class="num">Value</th><th class="num">Feas.</th><th class="num">Score</th><th>Stage</th><th>Value status</th></tr>
+      <tr><td>UC-01</td><td>Medical information inquiry drafting assistant</td><td>AI &amp; Data Innovators</td><td><span class="pill t3">Tier 3</span></td><td class="num">4</td><td class="num">3</td><td class="num"><strong>12</strong></td><td>Pilot</td><td><span class="pill g">Baseline captured</span></td></tr><tr><td>UC-02</td><td>Regulatory document first-draft assistant</td><td>AI &amp; Data Innovators</td><td><span class="pill t3">Tier 3</span></td><td class="num">5</td><td class="num">2</td><td class="num"><strong>10</strong></td><td>Design</td><td><span class="pill v">Value Risk: no baseline</span></td></tr><tr><td>UC-03</td><td>Clinical trial site-selection analytics</td><td>AI &amp; Data Innovators</td><td><span class="pill t2">Tier 2</span></td><td class="num">4</td><td class="num">3</td><td class="num"><strong>12</strong></td><td>Build</td><td><span class="pill g">On track</span></td></tr><tr><td>UC-04</td><td>Manufacturing deviation triage assistant</td><td>Transformers</td><td><span class="pill t3">Tier 3</span></td><td class="num">4</td><td class="num">2</td><td class="num"><strong>8</strong></td><td>Intake</td><td><span class="pill a">Not started</span></td></tr><tr><td>UC-05</td><td>HR policy Q&amp;A assistant</td><td>Workforce Architects</td><td><span class="pill t1">Tier 1</span></td><td class="num">2</td><td class="num">5</td><td class="num"><strong>10</strong></td><td>Scaled</td><td><span class="pill g">Benefit confirmed</span></td></tr><tr><td>UC-06</td><td>Transformation Office meeting summaries and action tracking</td><td>Transformers</td><td><span class="pill t1">Tier 1</span></td><td class="num">3</td><td class="num">5</td><td class="num"><strong>15</strong></td><td>Scaled</td><td><span class="pill g">Benefit confirmed</span></td></tr>
+    </table></div>
+    <p class="note">UC-02 has the highest value score but can't pass its first gate until it has a baseline. That's exactly the kind of call this view is built to surface.</p>
+  </div>
+
+  <h2 id="gates">4. Stage gates: Go, Iterate, or Stop</h2>
+  <p>Each gate ends in one of three decisions, recorded with the reason. Stopping a use case that isn't working is a governance success, not a failure.</p>
+  <div class="scroll"><table class="plain">
+    <tr><th>Gate</th><th>Question</th><th>Evidence required</th></tr>
+    <tr><td><strong>1. Approve to build</strong></td><td>Is this worth building, and do we know how we'll measure it?</td><td>Complete intake; tier assigned; target metric with baseline plan; owner</td></tr>
+    <tr><td><strong>2. Pilot decision</strong></td><td>Does it work well enough, safely enough?</td><td>Evaluation results against thresholds; tier controls in place; model card; pilot user feedback</td></tr>
+    <tr><td><strong>3. Scale</strong></td><td>Did the pilot move the metric?</td><td>Value evidence against baseline; adoption; monitoring and support handoff</td></tr>
+    <tr><td><strong>Value review</strong></td><td>Is it still delivering, 90 days on?</td><td>Scorecard actuals; drift or incident review; continue, change, or retire</td></tr>
+  </table></div>
+  <p class="note"><strong>Go</strong> moves to the next stage. <strong>Iterate</strong> returns to build with specific conditions and a date. <strong>Stop</strong> retires the use case and records what was learned.</p>
+
+  <h2 id="card">5. Model card</h2>
+  <p>A one-page record that travels with the use case. It answers what a reviewer, a new team member or an auditor will ask first.</p>
+  <ul class="check">
+    <li><strong>Purpose and intended users:</strong> what it's for, and who should use it</li>
+    <li><strong>Out of scope:</strong> uses it must not be put to</li>
+    <li><strong>Model and data:</strong> model or platform, data sources, and data that is deliberately excluded</li>
+    <li><strong>Human oversight:</strong> where a person reviews, approves, or can override</li>
+    <li><strong>Evaluation:</strong> test set, thresholds, and results at the last gate</li>
+    <li><strong>Known limitations:</strong> where it fails or is unreliable</li>
+    <li><strong>Monitoring:</strong> what's watched in production, and who owns it</li>
+  </ul>
+
+  <h2 id="value">6. Value scorecard</h2>
+  <p>This is where my <a href="operating-rhythm.html#raid">Value Risk</a> idea becomes measurable. Each use case carries one line from approval to retirement.</p>
+  <div class="sample">
+    <div class="sample-tag">Sample &middot; fictional</div>
+    <div class="scroll"><table class="plain">
+      <tr><th>Use case</th><th>Metric</th><th class="num">Baseline</th><th class="num">Target</th><th class="num">Actual</th><th>Attribution</th><th>Status</th></tr>
+      <tr><td>UC-05 HR policy Q&amp;A</td><td>HR tickets for policy questions per month</td><td class="num">1,200</td><td class="num">840</td><td class="num">790</td><td>Measured against prior-year months</td><td><span class="pill g">Benefit confirmed</span></td></tr>
+      <tr><td>UC-01 Medical information drafting</td><td>Median time to first draft response</td><td class="num">3.0 days</td><td class="num">1.5 days</td><td class="num">Pilot</td><td>Pilot group vs. control group</td><td><span class="pill a">Measuring</span></td></tr>
+      <tr><td>UC-02 Regulatory first drafts</td><td>Author hours per document section</td><td class="num">Not set</td><td class="num">&minus;30%</td><td class="num">&mdash;</td><td>Not designed yet</td><td><span class="pill v">Value Risk</span></td></tr>
+    </table></div>
+  </div>
+  <p class="note">The attribution column matters. If several changes land at once, the scorecard says so instead of crediting the AI with all of it.</p>
+
+  <h2 id="report">7. Portfolio report for transformation leadership</h2>
+  <p>The monthly view the Portfolio Strategy &amp; Value lead takes to the client's transformation leadership. It leads with decisions and value, then the counts.</p>
+  <div class="sample">
+    <div class="sample-tag">Sample &middot; fictional &middot; month 5</div>
+    <div class="tiles">
+      <div class="tile"><div class="n">6</div><div class="l">use cases in the portfolio</div></div>
+      <div class="tile"><div class="n">2</div><div class="l">scaled, both with benefit confirmed</div></div>
+      <div class="tile"><div class="n">3</div><div class="l">Tier 3, needing quality and regulatory sign-off</div></div>
+      <div class="tile"><div class="n">1</div><div class="l">open Value Risk</div></div>
+    </div>
+    <p><strong>Decisions needed:</strong> (1) Hold UC-02 at Gate 1 until a baseline for author hours is captured. (2) Confirm quality and regulatory reviewers for UC-04 before it enters design.</p>
+    <p><strong>Value:</strong> Scaled use cases are beating target. UC-01 pilot readout in 3 weeks.</p>
+  </div>
+
+  <h2>Framework alignment</h2>
+  <p>Each tool maps to the four functions of the NIST AI Risk Management Framework. The same records can serve as evidence in an AI management system such as one built to ISO/IEC 42001.</p>
+  <div class="scroll"><table class="plain">
+    <tr><th>Tool</th><th>Govern</th><th>Map</th><th>Measure</th><th>Manage</th></tr>
+    <tr><td>Intake</td><td></td><td>&#10003;</td><td></td><td></td></tr>
+    <tr><td>Risk tiers</td><td>&#10003;</td><td>&#10003;</td><td></td><td></td></tr>
+    <tr><td>Prioritization</td><td></td><td></td><td></td><td>&#10003;</td></tr>
+    <tr><td>Stage gates</td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
+    <tr><td>Model card</td><td></td><td>&#10003;</td><td>&#10003;</td><td></td></tr>
+    <tr><td>Value scorecard</td><td></td><td></td><td>&#10003;</td><td>&#10003;</td></tr>
+    <tr><td>Portfolio report</td><td>&#10003;</td><td></td><td></td><td>&#10003;</td></tr>
+  </table></div>
+
+  <h2 id="example">Worked example: my Sev1 incident agent</h2>
+  <p>To test the toolkit, I ran a real system through it after the fact: the <a href="sev1-agent.html">Copilot Studio agent</a> I built for Severity 1 incident response.</p>
+  <div class="real">
+    <div class="real-tag">Real system &middot; governance package applied retroactively</div>
+    <div class="scroll"><table class="plain">
+      <tr><th>Record</th><th>Result</th></tr>
+      <tr><td>Intake</td><td>Problem: incident commanders started every Sev1 from zero. Metric: Sev1 time to resolve. Users: incident commanders. Data: status emails, the incident Teams chat, and monitoring data pasted in by hand.</td></tr>
+      <tr><td>Tier</td><td><span class="pill t2">Tier 2</span> Internal operations, recommend only, two human gates, and no path to patient data by design.</td></tr>
+      <tr><td>Controls in place</td><td>Human approval before any action; data boundary through network isolation; approved platform; prompts built on the IT director's standard Sev1 questions.</td></tr>
+      <tr><td>Controls missing</td><td>Evaluation set with pass thresholds; structured feedback capture; a plan to measure the agent's contribution separately.</td></tr>
+      <tr><td>Value scorecard</td><td>Sev1 time to resolve fell 15% in three months, alongside better monitoring and Datadog's Bits AI. Attribution: combined result; the agent's share wasn't isolated.</td></tr>
+    </table></div>
+    <p style="margin-top:12px"><strong>What the toolkit would have changed:</strong> Gate 1 would have required an attribution plan, so the agent's own contribution could be measured. Gate 2 would have required a small evaluation set from past incidents before go-live, which would likely have surfaced the agent's early overconfidence before the team relied on it in live incidents.</p>
+  </div>
+
+  <footer>Eric Schnarr &middot; Saint Louis, MO &middot; <a href="https://www.linkedin.com/in/ericschnarr">LinkedIn</a> &middot; <a href="./">Portfolio home</a></footer>
+</div>
+</body>
+</html>
