@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI-Enabled Program Operating Rhythm | Eric Schnarr</title>
+<meta name="description" content="A toolkit for running a multi-workstream transformation program with discipline and visibility: operating cadence, decision-ready status, a RAID log with Value Risk, budget-versus-plan tracking, and the AI automation layer that keeps it running.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI-Enabled Program Operating Rhythm: A Toolkit">
+<meta property="og:description" content="Cadence, decision-ready status, a RAID log with Value Risk, budget-versus-plan tracking, and the AI automation layer that keeps a transformation office running.">
+<meta property="og:url" content="https://schnarre13.github.io/operating-rhythm.html">
+<meta property="og:image" content="https://schnarre13.github.io/operating-rhythm-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Eric Schnarr">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --ink: #1c1f24;
+    --muted: #5b6270;
+    --line: #e2ddd2;
+    --accent: #1f5c4d;
+    --accent-soft: #e3eee9;
+    --tag: #8a6a2f;
+    --tint: #efece5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171b;
+      --surface: #1c2026;
+      --ink: #eceae4;
+      --muted: #a2a8b3;
+      --line: #2c323a;
+      --accent: #6fc2a8;
+      --accent-soft: #1d2f2a;
+      --tag: #d6b273;
+      --tint: #20252c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 Inter, system-ui, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  nav { padding: 24px 0 0; font-size: 15px; }
+  nav a { text-decoration: none; }
+  header { padding: 40px 0 32px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--tag); font-weight: 600; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 10px 0 16px; }
+  .lede { font-size: 19px; color: var(--muted); margin: 0; }
+  h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 26px; margin: 48px 0 12px; }
+  h3 { font-size: 18px; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  .facts { width: 100%; border-collapse: collapse; margin: 28px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  .facts th, .facts td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .facts tr:last-child th, .facts tr:last-child td { border-bottom: none; }
+  .facts th { width: 120px; color: var(--muted); font-weight: 600; }
+  figure { margin: 24px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .decision { margin: 0 0 20px; }
+  .decision strong { display: block; margin-bottom: 4px; }
+  .guards { display: grid; gap: 12px; margin-top: 16px; }
+  .guard { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; font-size: 15px; }
+  .guard strong { display: block; margin-bottom: 2px; font-size: 16px; }
+  .callout { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; margin: 20px 0; }
+  .callout p:last-child { margin: 0; }
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 8px; }
+  footer { margin-top: 56px; padding: 32px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  /* diagram */
+  .d-edge { stroke: var(--muted); }
+  .d-box { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+  .d-main { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .d-group { fill: none; stroke: var(--line); stroke-width: 1.25; }
+  .d-zone { fill: var(--tint); stroke: var(--muted); stroke-width: 1.25; stroke-dasharray: 5 4; }
+  .d-name { fill: var(--ink); font-weight: 600; font-size: 13px; }
+  .d-line { fill: var(--muted); font-size: 11.5px; }
+  .d-job { fill: var(--ink); font-size: 11.5px; }
+  table.plain { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 12px 0 20px; background: var(--surface); border: 1px solid var(--line); }
+  table.plain th, table.plain td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.plain th { color: var(--muted); font-weight: 600; background: var(--tint); }
+  table.plain td.num, table.plain th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pill { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .g { background: #e3f1e7; color: #1f6b3a; } .a { background: #fbf0d9; color: #8a5a00; } .r { background: #f9e1df; color: #9b2c22; }
+  .v { background: #e7e3f6; color: #4b3a8f; }
+  @media (prefers-color-scheme: dark) { .g { background:#1d3326; color:#8fd3a6; } .a { background:#3a3020; color:#e7c27a; } .r { background:#3d2422; color:#f0a49b; } .v { background:#2b2640; color:#c2b6f2; } }
+  .sample { border: 1px dashed var(--muted); border-radius: 12px; padding: 18px 20px; margin: 20px 0; background: var(--surface); }
+  .sample-tag { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--tag); font-weight: 600; margin-bottom: 8px; }
+  pre.prompt { white-space: pre-wrap; background: var(--tint); border-radius: 10px; padding: 14px 16px; font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 8px 0 18px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .toc a { font-size: 14px; text-decoration: none; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+  .note { font-size: 14px; color: var(--muted); }
+  .wrap { max-width: 960px; }
+  table.plain td:first-child { white-space: nowrap; }
+  .sample table.plain td:first-child { white-space: normal; }
+  .sample table.plain.raid td:first-child { white-space: nowrap; }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="./">&larr; Eric Schnarr &middot; Portfolio</a></nav>
+
+  <header>
+    <div class="eyebrow">Framework &middot; Program operations</div>
+    <h1>AI-Enabled Program Operating Rhythm</h1>
+    <p class="lede">How I run a multi-workstream transformation program so leaders always know where it stands and what they need to decide. It has five parts: a cadence, decision-ready status, a RAID log that tracks whether the work will pay off, budget against plan, and an AI layer that does the assembly work a PMO team used to do by hand.</p>
+    <div class="toc">
+      <a href="#cadence">Cadence</a><a href="#status">Status report</a><a href="#raid">RAID + Value Risk</a><a href="#budget">Budget vs plan</a><a href="#ai">AI automation layer</a><a href="#proof">Proven in practice</a>
+    </div>
+  </header>
+
+  <p style="margin-top:28px">Every example below uses one <strong>fictional sample program</strong>: a 12-month enterprise AI transformation office with four workstreams (AI Use Case Delivery, Data Foundations, Workforce Enablement, Governance &amp; Risk) and a $4.8M budget, shown at month 5. The program is invented; the methods are the ones I've used.</p>
+
+  <h2 id="cadence">1. Operating cadence</h2>
+  <p>The cadence is the program's heartbeat. Each forum has one job, a fixed set of inputs, and a defined output, so no meeting exists just to share updates.</p>
+  <div class="scroll"><table class="plain">
+    <tr><th>Forum</th><th>When</th><th>Who</th><th>Input</th><th>Output</th><th>Automated</th></tr>
+    <tr><td><strong>Workstream check-in</strong></td><td>Weekly</td><td>Workstream leads</td><td>Task and milestone updates</td><td>Updated plan, new RAID items</td><td>Notes to RAID draft</td></tr>
+    <tr><td><strong>Program status</strong></td><td>Weekly</td><td>Portfolio lead, sponsors</td><td>Plan, RAID, budget</td><td>Decision-ready status report</td><td>Status first draft</td></tr>
+    <tr><td><strong>Risk and value review</strong></td><td>Every 2 weeks</td><td>Program lead, workstream leads</td><td>RAID log incl. Value Risk</td><td>Mitigations, escalations</td><td>Aging and overdue flags</td></tr>
+    <tr><td><strong>Steering committee</strong></td><td>Monthly</td><td>Client transformation leadership</td><td>Status, budget variance, decisions</td><td>Decisions, priority changes</td><td>Deck assembly</td></tr>
+    <tr><td><strong>Value review</strong></td><td>Quarterly</td><td>Sponsors, finance</td><td>Benefits tracked vs. business case</td><td>Continue, change, or stop</td><td>Metric pull</td></tr>
+  </table></div>
+
+  <h2 id="status">2. Decision-ready status report</h2>
+  <p>A status report should lead with what leadership needs to decide, not with what the team did. This format fits on one page and is written so an executive can act on the first five lines.</p>
+  <div class="sample">
+    <div class="sample-tag">Sample &middot; fictional program &middot; week 21</div>
+    <p><strong>Overall:</strong> <span class="pill a">Amber</span> On scope. The program is 10% behind schedule (SPI 0.90) and spending about 17% more than the value of work completed (CPI 0.86), driven mainly by AI Use Case Delivery. Recovery decisions below.</p>
+    <p><strong>Decisions needed this week</strong></p>
+    <ol>
+      <li>Approve moving use case 3 (contract review assistant) behind use case 4, which has a measured baseline, so value can be proven first. Owner: Portfolio Strategy &amp; Value Lead. Needed by Friday.</li>
+      <li>Approve two weeks of data engineering support from Data Foundations to clear the evaluation-data backlog. Owner: Program sponsor.</li>
+    </ol>
+    <div class="scroll"><table class="plain">
+      <tr><th>Workstream</th><th>Status</th><th>This period</th><th>Next 2 weeks</th></tr>
+      <tr><td>AI Use Case Delivery</td><td><span class="pill a">Amber</span></td><td>Use cases 1&ndash;2 live in pilot; use case 3 blocked on evaluation data</td><td>Clear evaluation data; resequence use case 3</td></tr>
+      <tr><td>Data Foundations</td><td><span class="pill g">Green</span></td><td>Data classification complete for 3 of 5 domains</td><td>Domains 4&ndash;5; support Use Case Delivery</td></tr>
+      <tr><td>Workforce Enablement</td><td><span class="pill g">Green</span></td><td>Training wave 1 complete; adoption KPIs baselined</td><td>Wave 2; first adoption readout</td></tr>
+      <tr><td>Governance &amp; Risk</td><td><span class="pill a">Amber</span></td><td>Intake and risk tiering live; model cards for 2 of 4 use cases</td><td>Close model-card gap before pilot expansion</td></tr>
+    </table></div>
+    <p><strong>Top risks:</strong> evaluation data readiness (delivery risk); use case 3 has no baseline metric (Value Risk). <strong>Budget:</strong> CPI 0.86, SPI 0.90; forecast at completion $5.6M vs. $4.8M budget if unchanged.</p>
+  </div>
+
+  <h2 id="raid">3. RAID log with Value Risk</h2>
+  <p>A standard RAID log tracks <em>delivery</em> risk: will we ship on time and on budget? It rarely tracks whether the thing we ship will work. I add a fifth category, <strong>Value Risk</strong>: the risk that a deliverable lands on schedule and still doesn't move the business metric it was approved to move. In AI programs this is the risk that matters most, and it's the one most often left off the log.</p>
+  <div class="sample">
+    <div class="sample-tag">Sample &middot; fictional program</div>
+    <div class="scroll"><table class="plain raid">
+      <tr><th>ID</th><th>Type</th><th>Description</th><th>Owner</th><th>Impact</th><th>Response</th><th>Due</th></tr>
+      <tr><td>R-07</td><td><span class="pill r">Risk</span></td><td>Evaluation data for use case 3 not ready; pilot may slip 3 weeks</td><td>Data lead</td><td>High</td><td>Borrow 2 weeks of data engineering from Data Foundations</td><td>Wk 23</td></tr>
+      <tr><td>V-02</td><td><span class="pill v">Value Risk</span></td><td>Use case 3 has no baseline for review cycle time, so success can't be measured after launch</td><td>Value lead</td><td>High</td><td>Capture 4-week baseline before go-live; resequence behind use case 4</td><td>Wk 22</td></tr>
+      <tr><td>V-03</td><td><span class="pill v">Value Risk</span></td><td>Adoption KPI measures logins, not tasks completed with AI; could show success without benefit</td><td>Enablement lead</td><td>Medium</td><td>Replace with task-level adoption metric</td><td>Wk 24</td></tr>
+      <tr><td>A-04</td><td><span class="pill a">Assumption</span></td><td>Business owners can release staff 2 hours/week for training</td><td>Enablement lead</td><td>Medium</td><td>Confirm with each business owner</td><td>Wk 22</td></tr>
+      <tr><td>I-11</td><td><span class="pill r">Issue</span></td><td>Model cards missing for 2 of 4 use cases; governance gate not met</td><td>Governance lead</td><td>High</td><td>No pilot expansion until complete</td><td>Wk 23</td></tr>
+      <tr><td>D-05</td><td><span class="pill g">Dependency</span></td><td>Use case 4 needs data classification for domain 4</td><td>Data lead</td><td>Medium</td><td>Domain 4 prioritized in next sprint</td><td>Wk 24</td></tr>
+    </table></div>
+  </div>
+  <p class="note">The Value Risk test for every use case: <em>if no one can name the business metric it's supposed to move, how will anyone know it worked?</em></p>
+
+  <h2 id="budget">4. Budget against plan</h2>
+  <p>I track budget with earned value, so variance shows up early and is tied to delivered work rather than just spend. A workstream can be under budget because it's behind; earned value makes that visible.</p>
+  <div class="sample">
+    <div class="sample-tag">Sample &middot; fictional program &middot; month 5</div>
+    <div class="scroll"><table class="plain">
+      <tr><th>Workstream</th><th class="num">Budget (BAC)</th><th class="num">Planned (PV)</th><th class="num">Earned (EV)</th><th class="num">Actual (AC)</th><th class="num">Cost var.</th><th class="num">Sched. var.</th><th class="num">CPI</th><th class="num">SPI</th></tr>
+      <tr><td>AI Use Case Delivery</td><td class='num'>$1.80M</td><td class='num'>$0.80M</td><td class='num'>$0.70M</td><td class='num'>$0.90M</td><td class='num'>&minus;$0.20M</td><td class='num'>&minus;$0.10M</td><td class='num'>0.78</td><td class='num'>0.87</td></tr><tr><td>Data Foundations</td><td class='num'>$1.40M</td><td class='num'>$0.60M</td><td class='num'>$0.55M</td><td class='num'>$0.60M</td><td class='num'>&minus;$0.05M</td><td class='num'>&minus;$0.05M</td><td class='num'>0.92</td><td class='num'>0.92</td></tr><tr><td>Workforce Enablement</td><td class='num'>$0.80M</td><td class='num'>$0.30M</td><td class='num'>$0.30M</td><td class='num'>$0.28M</td><td class='num'>+$0.02M</td><td class='num'>$0.00M</td><td class='num'>1.07</td><td class='num'>1.00</td></tr><tr><td>Governance & Risk</td><td class='num'>$0.80M</td><td class='num'>$0.30M</td><td class='num'>$0.25M</td><td class='num'>$0.32M</td><td class='num'>&minus;$0.07M</td><td class='num'>&minus;$0.05M</td><td class='num'>0.78</td><td class='num'>0.83</td></tr><tr><td><strong>Program total</strong></td><td class='num'><strong>$4.80M</strong></td><td class='num'><strong>$2.00M</strong></td><td class='num'><strong>$1.80M</strong></td><td class='num'><strong>$2.10M</strong></td><td class='num'><strong>&minus;$0.30M</strong></td><td class='num'><strong>&minus;$0.20M</strong></td><td class='num'><strong>0.86</strong></td><td class='num'><strong>0.90</strong></td></tr>
+    </table></div>
+    <p class="note">CPI = EV &divide; AC (cost efficiency); SPI = EV &divide; PV (schedule efficiency); below 1.00 means over cost or behind schedule. Forecast at completion = BAC &divide; CPI = $5.6M if current efficiency holds. The variance is concentrated in AI Use Case Delivery and Governance &amp; Risk, which is where the status report points leadership.</p>
+  </div>
+
+  <h2 id="ai">5. The AI automation layer</h2>
+  <p>The rhythm above used to need a PMO team to chase updates, assemble reports and keep logs current. The AI layer does the assembly; people do the judgment. The rule I hold to: <strong>AI drafts, a person decides, nothing reaches leadership unreviewed.</strong></p>
+  <div class="scroll"><table class="plain">
+    <tr><th>Task</th><th>AI does</th><th>A person does</th></tr>
+    <tr><td>Weekly status</td><td>Drafts the report from workstream notes, plan and RAID</td><td>Checks facts, sets the overall status, writes the decisions</td></tr>
+    <tr><td>RAID upkeep</td><td>Pulls candidate risks, actions and decisions from meeting transcripts</td><td>Accepts, rejects, assigns owners</td></tr>
+    <tr><td>Budget variance</td><td>Calculates EVM, flags workstreams under 0.90 CPI or SPI</td><td>Explains the cause and the recovery plan</td></tr>
+    <tr><td>Intake</td><td>Checks requests for completeness and duplication with existing work</td><td>Prioritizes and approves</td></tr>
+    <tr><td>Steering deck</td><td>Assembles slides from approved status and budget</td><td>Owns the narrative and the ask</td></tr>
+  </table></div>
+
+  <h3>Prompt pack</h3>
+  <p>Three of the prompts behind the layer. They work with any capable assistant (I use Claude and Microsoft 365 Copilot).</p>
+  <p><strong>Status first draft</strong></p>
+  <pre class="prompt">You are drafting a weekly program status report for senior executives. Using only the workstream notes, plan, RAID log and budget table provided:
+1. Lead with "Decisions needed this week": each with the decision, owner and deadline.
+2. Give one overall status (Green/Amber/Red) and one sentence explaining it.
+3. For each workstream: status, what changed this period, next two weeks. One line each.
+4. List the top two risks, including any Value Risk items.
+Do not invent progress, dates or numbers. If information is missing, write "Not reported" and list it at the end for follow-up.</pre>
+  <p><strong>RAID extraction from a meeting transcript</strong></p>
+  <pre class="prompt">From this meeting transcript, list candidate RAID items. For each: type (Risk, Assumption, Issue, Dependency, or Value Risk), a one-sentence description, the person who raised it, and a suggested owner. Classify as Value Risk anything that questions whether a deliverable will improve the business metric it was approved for. Quote the transcript line that supports each item. Do not add items that aren't in the transcript.</pre>
+  <p><strong>Variance explanation check</strong></p>
+  <pre class="prompt">Here is the earned value table and each workstream lead's explanation of their variance. For each workstream below 0.90 CPI or SPI, state whether the explanation accounts for the numbers, what is still unexplained, and one question to ask the lead before the steering committee.</pre>
+
+  <h2 id="proof">Proven in practice</h2>
+  <p>This toolkit packages methods I used running a 20+ program PMO portfolio at a HIPAA-regulated healthcare SaaS company:</p>
+  <ul>
+    <li><strong>Reporting effort cut 50%.</strong> Standardized project forms and schedules let the CIO, COO and CISO of the Healthcare Vertical self-serve program status on demand.</li>
+    <li><strong>Monthly cost report from 20 hours to 1.</strong> Automated the data pulls with Datadog and its embedded Bits AI.</li>
+    <li><strong>3&ndash;4 hours saved per project at intake.</strong> Rules-based workflow automation in Smartsheet and Adaptive Work replaced chasing sponsors and SMEs for intake data.</li>
+    <li><strong>Earned value in practice.</strong> EVM, schedule and cost variance, CPI and SPI as part of PMO forecasting, with monthly steering committees.</li>
+    <li><strong>AI drafting with human review.</strong> Teams Copilot generated periodic incident summaries from call transcripts using standard prompts (see the <a href="sev1-agent.html">Sev1 agent case study</a>).</li>
+  </ul>
+
+  <footer>Eric Schnarr &middot; Saint Louis, MO &middot; <a href="https://www.linkedin.com/in/ericschnarr">LinkedIn</a> &middot; <a href="./">Portfolio home</a></footer>
+</div>
+</body>
+</html>

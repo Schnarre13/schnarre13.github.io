@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Agent Pipeline for My Job Search | Eric Schnarr</title>
+<meta name="description" content="Case study: a scheduled AI agent pipeline that searches two job boards, screens postings against governed rules, evaluates fit with a reusable skill, and hands a ranked shortlist to a human decision-maker every morning.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Case Study: An AI Agent Pipeline That Runs My Job Search">
+<meta property="og:description" content="Scheduled agent orchestration with connectors, governed screening rules, a reusable skill as decision logic, and a human approval gate. What I built, what broke, and what I learned.">
+<meta property="og:url" content="https://schnarre13.github.io/job-pipeline.html">
+<meta property="og:image" content="https://schnarre13.github.io/job-pipeline-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Eric Schnarr">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --ink: #1c1f24;
+    --muted: #5b6270;
+    --line: #e2ddd2;
+    --accent: #1f5c4d;
+    --accent-soft: #e3eee9;
+    --tag: #8a6a2f;
+    --tint: #efece5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171b;
+      --surface: #1c2026;
+      --ink: #eceae4;
+      --muted: #a2a8b3;
+      --line: #2c323a;
+      --accent: #6fc2a8;
+      --accent-soft: #1d2f2a;
+      --tag: #d6b273;
+      --tint: #20252c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 Inter, system-ui, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  nav { padding: 24px 0 0; font-size: 15px; }
+  nav a { text-decoration: none; }
+  header { padding: 40px 0 32px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--tag); font-weight: 600; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 10px 0 16px; }
+  .lede { font-size: 19px; color: var(--muted); margin: 0; }
+  h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 26px; margin: 48px 0 12px; }
+  h3 { font-size: 18px; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  .facts { width: 100%; border-collapse: collapse; margin: 28px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  .facts th, .facts td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .facts tr:last-child th, .facts tr:last-child td { border-bottom: none; }
+  .facts th { width: 120px; color: var(--muted); font-weight: 600; }
+  figure { margin: 24px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .decision { margin: 0 0 20px; }
+  .decision strong { display: block; margin-bottom: 4px; }
+  .guards { display: grid; gap: 12px; margin-top: 16px; }
+  .guard { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; font-size: 15px; }
+  .guard strong { display: block; margin-bottom: 2px; font-size: 16px; }
+  .callout { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; margin: 20px 0; }
+  .callout p:last-child { margin: 0; }
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 8px; }
+  footer { margin-top: 56px; padding: 32px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  /* diagram */
+  .d-edge { stroke: var(--muted); }
+  .d-box { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+  .d-main { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .d-group { fill: none; stroke: var(--line); stroke-width: 1.25; }
+  .d-zone { fill: var(--tint); stroke: var(--muted); stroke-width: 1.25; stroke-dasharray: 5 4; }
+  .d-name { fill: var(--ink); font-weight: 600; font-size: 13px; }
+  .d-line { fill: var(--muted); font-size: 11.5px; }
+  .d-job { fill: var(--ink); font-size: 11.5px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 28px 0 0; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .stat .n { font-family: Fraunces, Georgia, serif; font-size: 30px; color: var(--accent); line-height: 1.1; }
+  .stat .l { font-size: 14px; color: var(--muted); }
+  .d-gate { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  table.plain { width: 100%; border-collapse: collapse; font-size: 15px; margin: 12px 0 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  table.plain th, table.plain td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.plain th { color: var(--muted); font-weight: 600; background: var(--tint); }
+  table.plain tr:last-child td { border-bottom: none; }
+  .note { font-size: 14px; color: var(--muted); }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="./">&larr; Eric Schnarr &middot; Portfolio</a></nav>
+
+  <header>
+    <div class="eyebrow">Case study &middot; Agent orchestration</div>
+    <h1>An AI Agent Pipeline That Runs My Job Search</h1>
+    <p class="lede">I turned a manual, repetitive workflow into a scheduled AI agent pipeline. Every morning it searches two job boards, screens postings against rules I set, evaluates fit against my resume, and hands me a ranked shortlist. I make every decision that matters. It does the legwork that used to take hours.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">~150</div><div class="l">postings screened on the first run</div></div>
+      <div class="stat"><div class="n">10</div><div class="l">full fit evaluations, the daily cap</div></div>
+      <div class="stat"><div class="n">3</div><div class="l">strong candidates surfaced</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">resumes sent without my review</div></div>
+    </div>
+  </header>
+
+  <h2>The problem</h2>
+  <p>A thorough job search is program work. Every posting needs the same steps: find it, read it, check pay, location and seniority, compare it to my experience, estimate how well a resume would score in applicant tracking systems, and decide whether it's worth a tailored application. I was doing all of that by hand, one posting at a time, using generic searches that returned far more noise than signal.</p>
+  <p>I already had a well-tuned evaluation process: a reusable Claude skill that scores fit and builds tailored resumes from my master resume. What I didn't have was the operating layer around it, the part that finds the work, filters it, runs the process consistently, and reports back.</p>
+
+  <h2>How it works</h2>
+  <figure>
+    <svg viewBox="0 0 760 300" role="img" aria-label="The pipeline does the legwork; I make the decisions">
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" style="fill: var(--muted)"/></marker></defs>
+      <text x="24" y="28" class="d-name" style="font-size:15px">The pipeline does the legwork; I make the decisions</text>
+      <rect x="16" y="44" width="728" height="128" rx="8" class="d-group"/>
+      <text x="32" y="64" class="d-line">Automated, every morning at 6:57 AM</text>
+      <g class="d-edge" fill="none" stroke-width="1.25">
+        <path d="M184 112H206" marker-end="url(#arr)"/>
+        <path d="M368 112H390" marker-end="url(#arr)"/>
+        <path d="M552 112H574" marker-end="url(#arr)"/>
+        <path d="M656 140V198" marker-end="url(#arr)"/>
+        <path d="M574 230H554" marker-end="url(#arr)"/>
+        <path d="M390 230H370" marker-end="url(#arr)"/>
+      </g>
+      <rect x="24" y="84" width="160" height="56" rx="8" class="d-box"/>
+      <text x="104" y="108" text-anchor="middle" class="d-name">Search</text>
+      <text x="104" y="124" text-anchor="middle" class="d-line">Indeed + Dice connectors</text>
+      <rect x="208" y="84" width="160" height="56" rx="8" class="d-box"/>
+      <text x="288" y="108" text-anchor="middle" class="d-name">Screen</text>
+      <text x="288" y="124" text-anchor="middle" class="d-line">Rules in an editable config</text>
+      <rect x="392" y="84" width="160" height="56" rx="8" class="d-box"/>
+      <text x="472" y="108" text-anchor="middle" class="d-name">Evaluate</text>
+      <text x="472" y="124" text-anchor="middle" class="d-line">Fit skill + master resume</text>
+      <rect x="576" y="84" width="160" height="56" rx="8" class="d-box"/>
+      <text x="656" y="108" text-anchor="middle" class="d-name">Report</text>
+      <text x="656" y="124" text-anchor="middle" class="d-line">Ranked shortlist + log</text>
+      <rect x="576" y="200" width="160" height="60" rx="8" class="d-box"/>
+      <text x="656" y="224" text-anchor="middle" class="d-name">Notification</text>
+      <text x="656" y="240" text-anchor="middle" class="d-line">Top 3 to phone + email</text>
+      <rect x="392" y="200" width="160" height="60" rx="8" class="d-gate"/>
+      <text x="472" y="224" text-anchor="middle" class="d-name">I decide</text>
+      <text x="472" y="240" text-anchor="middle" class="d-job">Apply, skip, or dig in</text>
+      <rect x="208" y="200" width="160" height="60" rx="8" class="d-box"/>
+      <text x="288" y="224" text-anchor="middle" class="d-name">Tailored resume</text>
+      <text x="288" y="240" text-anchor="middle" class="d-line">Built with me present</text>
+      <text x="472" y="284" text-anchor="middle" class="d-line">Human approval gate: nothing is applied for, and no resume is built, without me</text>
+    </svg>
+    <figcaption>The automated half runs unattended and only produces information. Every action with consequences happens after the human gate.</figcaption>
+  </figure>
+
+  <h2>Design decisions</h2>
+  <div class="decision"><strong>1. One source of truth for the decision logic.</strong>My first plan was a Python and LangGraph pipeline with its own scoring prompt. Partway through, I realized that would create a second copy of logic I already trusted in my resume skill, and the two would drift apart. I scrapped that approach. The pipeline now calls the same skill I use by hand, so a fix in one place improves both. Governance applies to prompts the same way it applies to policies.</div>
+  <div class="decision"><strong>2. Rules live in a plain file, not in the code.</strong>Target titles, location rules, exclusions and limits sit in an editable config file the pipeline reads fresh every morning. When I decided to exclude engineer and architect titles, or to keep Associate Director roles, I changed a line of text. I didn't have to touch the automation.</div>
+  <div class="decision"><strong>3. Hard rules only on hard facts.</strong>A posting is skipped for pay only when it <em>states</em> pay below my floor. If pay isn't posted, the pipeline estimates a range, labels it as an estimate, and leaves the decision to me. An automated filter shouldn't throw out opportunities on a guess.</div>
+  <div class="decision"><strong>4. Cheap filters before expensive evaluation.</strong>Each full fit evaluation reads my entire master resume and runs a keyword analysis, so the pipeline screens by title, location, pay and history first and caps full evaluations at 10 per run, Tier 1 AI roles first.</div>
+  <div class="decision"><strong>5. A memory so work never repeats.</strong>Every posting the pipeline looks at is logged with the outcome. Nothing is evaluated twice, and the log doubles as an audit trail of what was considered and why it was dropped.</div>
+  <div class="decision"><strong>6. Tiered targeting, including a conditional tier.</strong>AI program and governance roles rank first, then program and portfolio leadership, then local project management roles. Business analyst roles are searched too, but they're kept only when the work centers on AI or emerging technology and the pay is right, and they're labeled "step back in scope."</div>
+
+  <h2>Guardrails</h2>
+  <table class="plain">
+    <tr><th>Guardrail</th><th>How it works</th></tr>
+    <tr><td><strong>Recommend only</strong></td><td>The pipeline never applies for a job and never builds a resume on its own. It produces a shortlist.</td></tr>
+    <tr><td><strong>Human gate</strong></td><td>I review every shortlist and decide what moves forward. Tailored resumes are built with me present, because that step asks me questions before writing.</td></tr>
+    <tr><td><strong>Truth source</strong></td><td>Fit is judged only against my master resume. The pipeline can't claim experience the master doesn't document.</td></tr>
+    <tr><td><strong>Labeled uncertainty</strong></td><td>Estimated pay and ATS scores are labeled as estimates, and the ATS estimate is calibrated against real Jobscan results.</td></tr>
+    <tr><td><strong>Data stays local</strong></td><td>My resume, config and logs stay in a folder on my own computer. The pipeline reads them there and writes the shortlist back.</td></tr>
+    <tr><td><strong>Disclosure</strong></td><td>Every shortlist states that listings were found with AI-assisted search and should be verified with the employer.</td></tr>
+  </table>
+
+  <h2>What broke, and what I changed</h2>
+  <p>The first scheduled run reported <strong>"succeeded"</strong> and produced nothing. It had stopped about a minute in. I ran the workflow end to end by hand to find out why, and that surfaced three more problems:</p>
+  <ul>
+    <li><strong>Sorting by newest was mostly noise.</strong> On one job board, date-sorted results were dominated by unrelated contract engineering roles. Sorting by relevance and widening the window to three days, with the history log preventing repeats, produced far better matches.</li>
+    <li><strong>Some job IDs were temporary.</strong> One connector's IDs expired between sessions, so the log now records each posting's permanent link instead.</li>
+    <li><strong>A 24-hour window was too narrow</strong> for a first run and too fragile day to day. The log makes a wider window safe.</li>
+  </ul>
+  <p>I rewrote the task's instructions to address each one, including an explicit requirement to finish every step and report any failure plainly.</p>
+
+  <h2>Lessons learned</h2>
+  <div class="callout"><p><strong>A "succeeded" status is not evidence.</strong> The run that produced nothing reported success. Automated work should be judged by its outputs, so I check that the shortlist and log actually changed, not that the job ran.</p></div>
+  <div class="decision"><strong>Decision logic should exist once.</strong>Duplicating prompts across tools is the AI version of maintaining two copies of a policy. Pointing automation at the same governed logic people use keeps them consistent.</div>
+  <div class="decision"><strong>Put the knobs where people can reach them.</strong>Most of the tuning after day one was configuration, not code. Keeping rules in a readable file let me adjust the system in minutes.</div>
+  <div class="decision"><strong>Calibrate before you trust.</strong>The first run's output shaped five rule changes. A pipeline is a program: it needs a feedback loop, and the first few cycles are where most of the value gets found.</div>
+
+  <h2>Tools</h2>
+  <p>Built with Claude as my build partner: Claude scheduled tasks for the daily run, Indeed and Dice connectors for search, my resume-tailor skill for evaluation, and Python for document generation and logging. The design, rules and governance decisions are mine; Claude did much of the building, which is exactly how I'd expect an AI-enabled program manager to work.</p>
+  <p class="note">Related: <a href="https://github.com/Schnarre13/Claude-JD-agent">the earlier Python and LangGraph prototype</a>, kept as a record of the approach I moved away from.</p>
+
+  <footer>Eric Schnarr &middot; Saint Louis, MO &middot; <a href="https://www.linkedin.com/in/ericschnarr">LinkedIn</a> &middot; <a href="./">Portfolio home</a></footer>
+</div>
+</body>
+</html>

@@ -59,7 +59,7 @@
   .pillar h3 { margin: 6px 0 6px; font-size: 18px; }
   .pillar p { margin: 0; color: var(--muted); font-size: 15px; }
 
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; }
   .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: flex; flex-direction: column; }
   .card .kind { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--tag); font-weight: 600; }
   .card h3 { margin: 8px 0 8px; font-size: 19px; }
@@ -67,6 +67,10 @@
   .status { align-self: flex-start; font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
   .card a.status { text-decoration: none; }
 
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
+  .metric { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
+  .metric .n { font-family: Fraunces, Georgia, serif; font-size: 32px; color: var(--accent); line-height: 1.1; }
+  .metric .l { color: var(--muted); font-size: 15px; margin-top: 4px; }
   .creds { display: flex; flex-wrap: wrap; gap: 10px; }
   .cred { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-size: 15px; }
 
@@ -114,6 +118,19 @@
 
 <section>
   <div class="wrap">
+    <h2>Automation results</h2>
+    <p class="lead">Measured outcomes from using automation and AI to run programs with less manual effort.</p>
+    <div class="metrics">
+      <div class="metric"><div class="n">50%</div><div class="l">less executive reporting effort, with leaders self-serving status on demand</div></div>
+      <div class="metric"><div class="n">20h &rarr; 1h</div><div class="l">monthly cloud cost report, automated with Datadog and Bits AI</div></div>
+      <div class="metric"><div class="n">3&ndash;4h</div><div class="l">saved per project at intake through workflow automation</div></div>
+      <div class="metric"><div class="n">15%</div><div class="l">faster Sev1 resolution, alongside better monitoring and an AI agent</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
     <h2>Work</h2>
     <p class="lead">Case studies and builds, added as each one is completed.</p>
     <div class="cards">
@@ -124,15 +141,21 @@
         <a class="status" href="sev1-agent.html">Read case study</a>
       </div>
       <div class="card">
-        <div class="kind">Build</div>
-        <h3>Claude JD agent</h3>
-        <p>In development: a Python and LangGraph agent that scores job descriptions against a candidate profile using the Claude API, with plain-code routing rules and a human final decision.</p>
-        <a class="status" href="https://github.com/Schnarre13/Claude-JD-agent">In progress · View code</a>
+        <div class="kind">Case study &middot; Agent orchestration</div>
+        <h3>An AI agent pipeline that runs my job search</h3>
+        <p>A scheduled pipeline that searches two job boards, screens against governed rules, evaluates fit with a reusable skill, and hands me a ranked shortlist every morning. What I built, what broke, and what I learned.</p>
+        <a class="status" href="job-pipeline.html">Read case study</a>
+      </div>
+      <div class="card">
+        <div class="kind">Framework</div>
+        <h3>AI-enabled program operating rhythm</h3>
+        <p>Cadence, decision-ready status, a RAID log with Value Risk, budget against plan with earned value, and the AI automation layer that keeps a transformation office running.</p>
+        <a class="status" href="operating-rhythm.html">View toolkit</a>
       </div>
       <div class="card">
         <div class="kind">Framework</div>
         <h3>AI governance toolkit</h3>
-        <p>Use-case intake, risk and impact assessment, a RAID log extended with Value Risk, model card, and post-implementation scorecard.</p>
+        <p>Use-case intake, risk and impact assessment, model card, and post-implementation scorecard, mapped to NIST AI RMF.</p>
         <span class="status">In progress</span>
       </div>
     </div>
