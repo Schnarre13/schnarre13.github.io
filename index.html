@@ -66,6 +66,7 @@
   .card p { margin: 0 0 16px; color: var(--muted); font-size: 15px; flex: 1; }
   .status { align-self: flex-start; font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
   .card a.status { text-decoration: none; }
+  .card.feature { grid-column: 1 / -1; border-color: var(--accent); }
 
   .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
   .metric { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; }
@@ -134,6 +135,12 @@
     <h2>Work</h2>
     <p class="lead">Case studies and builds, added as each one is completed.</p>
     <div class="cards">
+      <div class="card feature">
+        <div class="kind">Build &middot; Agent orchestration</div>
+        <h3>AI status orchestrator</h3>
+        <p>A LangGraph and Claude workflow that turns a week of raw program inputs into a decision-ready status report, an updated RAID log and a budget variance analysis. Parallel agents, a validator that sends bad drafts back, and a human approval gate before anything reaches leadership.</p>
+        <a class="status" href="status-orchestrator.html">See how it works</a>
+      </div>
       <div class="card">
         <div class="kind">Case study</div>
         <h3>Sev1 incident response agent</h3>
