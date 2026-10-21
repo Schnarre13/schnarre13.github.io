@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>From Hours Saved to Value Captured | Eric Schnarr</title>
+<meta name="description" content="How I turn AI efficiency into business value: redesigning the process around the AI, redeploying the capacity it frees, and measuring the result. A real PMO reporting redesign and an illustrative Life Sciences example.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="From Hours Saved to Value Captured: Process Reinvention with AI">
+<meta property="og:description" content="Most AI programs save hours on paper and capture none of the value. How I redesign the process around the AI, redeploy the capacity, and measure the result, with a real PMO example and a Life Sciences example.">
+<meta property="og:url" content="https://schnarre13.github.io/process-reinvention.html">
+<meta property="og:image" content="https://schnarre13.github.io/process-reinvention-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Eric Schnarr">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --ink: #1c1f24;
+    --muted: #5b6270;
+    --line: #e2ddd2;
+    --accent: #1f5c4d;
+    --accent-soft: #e3eee9;
+    --tag: #8a6a2f;
+    --tint: #efece5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171b;
+      --surface: #1c2026;
+      --ink: #eceae4;
+      --muted: #a2a8b3;
+      --line: #2c323a;
+      --accent: #6fc2a8;
+      --accent-soft: #1d2f2a;
+      --tag: #d6b273;
+      --tint: #20252c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 Inter, system-ui, sans-serif; }
+  a { color: var(--accent); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  nav { padding: 24px 0 0; font-size: 15px; }
+  nav a { text-decoration: none; }
+  header { padding: 40px 0 32px; border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--tag); font-weight: 600; }
+  h1 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 10px 0 16px; }
+  .lede { font-size: 19px; color: var(--muted); margin: 0; }
+  h2 { font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 26px; margin: 48px 0 12px; }
+  h3 { font-size: 18px; margin: 28px 0 8px; }
+  p { margin: 0 0 16px; }
+  .facts { width: 100%; border-collapse: collapse; margin: 28px 0 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 15px; }
+  .facts th, .facts td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .facts tr:last-child th, .facts tr:last-child td { border-bottom: none; }
+  .facts th { width: 120px; color: var(--muted); font-weight: 600; }
+  figure { margin: 24px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+  .decision { margin: 0 0 20px; }
+  .decision strong { display: block; margin-bottom: 4px; }
+  .guards { display: grid; gap: 12px; margin-top: 16px; }
+  .guard { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; font-size: 15px; }
+  .guard strong { display: block; margin-bottom: 2px; font-size: 16px; }
+  .callout { background: var(--accent-soft); border-radius: 12px; padding: 18px 20px; margin: 20px 0; }
+  .callout p:last-child { margin: 0; }
+  ul, ol { padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 8px; }
+  footer { margin-top: 56px; padding: 32px 0 56px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  /* diagram */
+  .d-edge { stroke: var(--muted); }
+  .d-box { fill: none; stroke: var(--muted); stroke-width: 1.25; }
+  .d-main { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .d-group { fill: none; stroke: var(--line); stroke-width: 1.25; }
+  .d-zone { fill: var(--tint); stroke: var(--muted); stroke-width: 1.25; stroke-dasharray: 5 4; }
+  .d-name { fill: var(--ink); font-weight: 600; font-size: 13px; }
+  .d-line { fill: var(--muted); font-size: 11.5px; }
+  .d-job { fill: var(--ink); font-size: 11.5px; }
+  table.plain { width: 100%; border-collapse: collapse; font-size: 14.5px; margin: 12px 0 20px; background: var(--surface); border: 1px solid var(--line); }
+  table.plain th, table.plain td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.plain th { color: var(--muted); font-weight: 600; background: var(--tint); }
+  table.plain td.num, table.plain th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .pill { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+  .g { background: #e3f1e7; color: #1f6b3a; } .a { background: #fbf0d9; color: #8a5a00; } .r { background: #f9e1df; color: #9b2c22; }
+  .v { background: #e7e3f6; color: #4b3a8f; }
+  @media (prefers-color-scheme: dark) { .g { background:#1d3326; color:#8fd3a6; } .a { background:#3a3020; color:#e7c27a; } .r { background:#3d2422; color:#f0a49b; } .v { background:#2b2640; color:#c2b6f2; } }
+  .sample { border: 1px dashed var(--muted); border-radius: 12px; padding: 18px 20px; margin: 20px 0; background: var(--surface); }
+  .sample-tag { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--tag); font-weight: 600; margin-bottom: 8px; }
+  pre.prompt { white-space: pre-wrap; background: var(--tint); border-radius: 10px; padding: 14px 16px; font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 8px 0 18px; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .toc a { font-size: 14px; text-decoration: none; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+  .note { font-size: 14px; color: var(--muted); }
+  .wrap { max-width: 960px; }
+  table.plain td:first-child { white-space: nowrap; }
+  .sample table.plain td:first-child { white-space: normal; }
+  .sample table.plain.raid td:first-child { white-space: nowrap; }
+  table.plain.tests td:first-child, table.plain.fit td:first-child { white-space: normal; }
+  .ok { color: var(--accent); font-weight: 600; white-space: nowrap; }
+  pre.trail { white-space: pre-wrap; background: var(--tint); border-radius: 10px; padding: 14px 16px; font: 13.5px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 8px 0 12px; overflow-x: auto; }
+  .d-ai { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.75; }
+  .d-human { fill: var(--tint); stroke: var(--tag); stroke-width: 2; }
+  .d-arrow { stroke: var(--muted); stroke-width: 1.4; fill: none; }
+  .d-loop { stroke: var(--tag); stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+  .d-lab { fill: var(--muted); font-size: 11.5px; }
+  .d-ah { fill: var(--muted); }
+  @media (max-width: 640px) { figure .scroll svg { min-width: 680px; } }
+  .d-ah2 { fill: var(--tag); }
+  .ladder { display: grid; gap: 10px; margin: 20px 0; }
+  .rung { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .rung .n { font-family: Fraunces, Georgia, serif; font-size: 22px; color: var(--accent); line-height: 1.2; }
+  .rung strong { display: block; }
+  .rung span { color: var(--muted); font-size: 15px; }
+  .rung.stop { border-style: dashed; }
+  .tagline-sm { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--tag); font-weight: 600; }
+  .flows { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  @media (max-width: 720px) { .flows { grid-template-columns: 1fr; } }
+  .flow { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .flow.after { border-color: var(--accent); }
+  .flow h4 { margin: 0 0 12px; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--tag); }
+  .flow ol { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+  .flow li { counter-increment: s; position: relative; padding: 10px 12px 10px 40px; border: 1px solid var(--line); border-radius: 10px; margin: 0 0 22px; font-size: 15px; background: var(--bg); }
+  .flow li:last-child { margin-bottom: 0; }
+  .flow li::before { content: counter(s); position: absolute; left: 12px; top: 10px; font-weight: 600; color: var(--muted); }
+  .flow li:not(:last-child)::after { content: "\2193"; position: absolute; left: 50%; bottom: -21px; color: var(--muted); font-size: 14px; }
+  .flow li.pain { border-color: #d9a29b; }
+  .flow li.ai { border-color: var(--accent); background: var(--accent-soft); }
+  .flow li.person { border-left: 3px solid var(--tag); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; border: 1px solid var(--line); }
+  .legend .lp { border-color: #d9a29b; } .legend .la { background: var(--accent-soft); border-color: var(--accent); } .legend .lh { border-left: 3px solid var(--tag); }
+  table.plain.wrap1 td:first-child { white-space: normal; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a href="./">&larr; Eric Schnarr &middot; Portfolio</a></nav>
+
+  <header>
+    <div class="eyebrow">Framework &middot; Process reinvention</div>
+    <h1>From Hours Saved to Value Captured</h1>
+    <p class="lede">Most AI programs save hours on paper and capture none of the value, because the process around the AI stays the same. This is how I redesign the work itself, redeploy the capacity AI frees up, and measure what the business actually gains.</p>
+    <div class="toc">
+      <a href="#ladder">The value ladder</a><a href="#questions">Five questions</a><a href="#real">Real example: PMO reporting</a><a href="#redeploy">Redeploying capacity</a><a href="#ls">Life Sciences example</a>
+    </div>
+  </header>
+
+  <h2 id="ladder">The value ladder</h2>
+  <p>AI value comes in four steps. Most programs stop at the first one, report the hours saved, and wonder later why the business results never arrived.</p>
+  <div class="ladder">
+    <div class="rung stop"><div class="n">1</div><div><strong>Automate the task</strong><span>AI does an existing step faster. Hours are saved, but the process, roles and decisions are unchanged. Most programs stop here.</span></div></div>
+    <div class="rung"><div class="n">2</div><div><strong>Redesign the process</strong><span>Remove steps that only existed to move information. Fix data at the source. Change who decides, and when.</span></div></div>
+    <div class="rung"><div class="n">3</div><div><strong>Redeploy the capacity</strong><span>Decide, explicitly and up front, where the freed time goes. Capacity that isn't redeployed gets absorbed and disappears.</span></div></div>
+    <div class="rung"><div class="n">4</div><div><strong>Measure the business result</strong><span>Track the metric the work was meant to move, such as cycle time, throughput or new initiatives delivered, not just hours saved.</span></div></div>
+  </div>
+  <div class="callout"><p><strong>The rule I apply:</strong> efficiency that isn't redeployed is a <strong>Value Risk</strong>. I log it in the RAID log and track it like any other risk, with an owner and a plan.</p></div>
+
+  <h2 id="questions">Five questions I ask before automating anything</h2>
+  <ol>
+    <li><strong>Where does the work wait?</strong> Hand-offs and approval queues usually cost more time than the work itself.</li>
+    <li><strong>Which steps exist only to move information?</strong> Copying, reformatting and re-entering data are candidates for removal, not automation.</li>
+    <li><strong>How many places hold the same information?</strong> Every duplicate source is a reconciliation job and a chance for the numbers to disagree.</li>
+    <li><strong>Who needs to decide, and when?</strong> If leaders can see the information whenever they want, meetings can be for decisions, not updates.</li>
+    <li><strong>What will the freed capacity do, and what metric proves it worked?</strong> If nobody can answer, the business case isn't finished.</li>
+  </ol>
+
+  <h2 id="real">Real example: executive program reporting</h2>
+  <p>In a PMO running a portfolio of 20+ concurrent programs, I led a redesign of how status reached leadership. The result was <strong>50% less executive reporting effort</strong>. Here's what changed in the process, not just the tools.</p>
+  <div class="flows">
+    <div class="flow">
+      <h4>Before</h4>
+      <ol>
+        <li class="pain">Status data pulled separately for two decks</li>
+        <li>PMs build and update their slides</li>
+        <li>Decks circulated to leadership weekly</li>
+        <li class="pain">Leaders call PMs, often after hours, with questions</li>
+      </ol>
+    </div>
+    <div class="flow after">
+      <h4>After</h4>
+      <ol>
+        <li class="ai">One grounded data source: Planview AdaptiveWork</li>
+        <li class="ai">Deck generated automatically from AdaptiveWork</li>
+        <li class="person">PMs edit one deck and fix any gaps in AdaptiveWork itself, so the source stays accurate</li>
+        <li class="person">Leaders self-serve any time: generate a leadership slide, open the initiative's AdaptiveWork page, or read the deck</li>
+        <li class="person">Weekly open review call for questions, feedback and walk-throughs with the PM</li>
+      </ol>
+    </div>
+  </div>
+  <div class="legend"><span><i class="lp"></i>Pain point</span><span><i class="la"></i>Automated</span><span><i class="lh"></i>People's role changed</span></div>
+
+  <h3>What changed, beyond the hours</h3>
+  <div class="scroll"><table class="plain wrap1">
+    <tr><th>Change</th><th>Why it mattered</th></tr>
+    <tr><td>Two data pulls became one</td><td>One version of the truth; nothing to reconcile between decks</td></tr>
+    <tr><td>Corrections made in the source, not on the slide</td><td>Every later report, page and slide is right, not just this week's deck</td></tr>
+    <tr><td>PMs went from building slides to curating data</td><td>Their time shifted from formatting to keeping the program record accurate</td></tr>
+    <tr><td>Leaders self-served at any time</td><td>After-hours calls with questions stopped</td></tr>
+    <tr><td>The weekly meeting became an open review</td><td>Time spent on questions, feedback and decisions, not reading status aloud</td></tr>
+  </table></div>
+
+  <h3>The next redesign: remove duplicate sources</h3>
+  <p>Better visibility and faster decisions were the first payoff. The bigger value comes from the next step: <strong>redesigning processes that still keep the same information in two places</strong>. For example, AdaptiveWork already tracked issues and risks, but some PMs still kept their own individual RAID logs. Standardizing on one source would further improve accuracy, visibility and time savings, and the time saved could be redirected to new initiatives. That's the step from rung 2 to rungs 3 and 4.</p>
+  <p>Two improvements I'd make to the reporting itself:</p>
+  <ul>
+    <li><strong>A live dashboard grounded in AdaptiveWork</strong> instead of a once-a-week deck, so leaders can find any initiative instantly.</li>
+    <li><strong>Automated capture from meeting minutes</strong>, pulling risks, action items and updates into the source. I prototyped this pattern in my <a href="status-orchestrator.html">AI status orchestrator</a>: every item quotes the line it came from, and a person confirms it before it enters the log.</li>
+  </ul>
+
+  <h2 id="redeploy">Redeploying the capacity</h2>
+  <p>The plan for freed time is written before the automation goes live, agreed with the sponsor, and tracked afterward. This is the approach I'd use for a transformation office:</p>
+  <div class="scroll"><table class="plain wrap1">
+    <tr><th>Step</th><th>What happens</th></tr>
+    <tr><td>Baseline</td><td>Measure the hours each role spends on the process today, before anything changes.</td></tr>
+    <tr><td>Agree the destination</td><td>Decide with the sponsor where freed capacity goes: new initiatives, deeper risk and value analysis, stakeholder engagement, or a reduced backlog.</td></tr>
+    <tr><td>Redesign the roles</td><td>Update what each role is expected to do, with the people doing it. In a transformation office this is work for the workforce and change team, not just the PMO.</td></tr>
+    <tr><td>Track it as Value Risk</td><td>If capacity isn't being used as agreed after two cycles, it goes on the RAID log with an owner.</td></tr>
+    <tr><td>Report the business result</td><td>Report what the capacity produced, not just the hours saved.</td></tr>
+  </table></div>
+
+  <h2 id="ls">Life Sciences example: promotional material review</h2>
+  <div class="sample">
+    <div class="sample-tag">Illustrative &middot; a common pharma process, not a specific client</div>
+    <p>Before promotional and medical materials can be used, they go through review by medical, legal and regulatory teams (often called MLR review). It's a frequent bottleneck, and a good test of the difference between automating a task and redesigning a process.</p>
+    <p><strong>Automating the task</strong> would have AI summarize reviewer comments faster. Helpful, but the material still goes around the same review loop, often more than once.</p>
+    <p><strong>Redesigning the process</strong> moves the checking earlier, so reviewers spend their time on judgment:</p>
+    <div class="flows">
+      <div class="flow">
+        <h4>Before</h4>
+        <ol>
+          <li>Brand team drafts the material</li>
+          <li class="pain">Submitted for review with missing or mismatched references</li>
+          <li>Medical, legal and regulatory reviewers each comment</li>
+          <li class="pain">Comments conflict or repeat; the author reconciles them by hand</li>
+          <li class="pain">Revise and resubmit, often for several rounds</li>
+          <li>Approved</li>
+        </ol>
+      </div>
+      <div class="flow after">
+        <h4>After</h4>
+        <ol>
+          <li class="ai">While drafting, AI checks claims against the approved claims library and flags missing references</li>
+          <li class="person">Author fixes issues before submitting</li>
+          <li class="ai">Risk tier set by rules: minor updates take a fast-track route</li>
+          <li class="person">Reviewers focus on the judgment calls</li>
+          <li class="ai">AI merges comments into one change list and flags conflicts for the reviewers to settle</li>
+          <li class="person">Reviewers approve. AI never approves.</li>
+        </ol>
+      </div>
+    </div>
+    <table class="plain wrap1">
+      <tr><th>Ladder step</th><th>In this example</th></tr>
+      <tr><td>Redesign the process</td><td>Checking moves to drafting; review is routed by risk; comments are consolidated</td></tr>
+      <tr><td>Redeploy the capacity</td><td>Reviewer time moves from catching missing references to higher-risk materials; brand teams get more materials to market</td></tr>
+      <tr><td>Measure the result</td><td>Cycle time to approval, review rounds per piece, first-pass approval rate</td></tr>
+      <tr><td>Controls</td><td>People keep final approval; every AI flag and change is logged for audit</td></tr>
+    </table>
+  </div>
+
+  <h2>Where this shows up in my work</h2>
+  <ul>
+    <li><strong>My <a href="operating-rhythm.html">operating rhythm toolkit</a></strong> and <strong><a href="status-orchestrator.html">status orchestrator</a></strong> are rung 1 and 2 for program operations: assembly automated, the meeting turned into a decision forum.</li>
+    <li><strong>My <a href="governance-toolkit.html">governance toolkit</a></strong> tracks the Value Risk, so a use case can't be called a success on hours saved alone.</li>
+    <li><strong>In a new role,</strong> the redesign and redeployment plan is part of my first 90 days, not something added afterward.</li>
+  </ul>
+
+  <footer>Eric Schnarr &middot; Saint Louis, MO &middot; <a href="https://www.linkedin.com/in/ericschnarr">LinkedIn</a> &middot; <a href="./">Portfolio home</a></footer>
+</div>
+</body>
+</html>
